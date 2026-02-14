@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:walletfox/providers/subscription_provider.dart';
 import 'package:walletfox/utils/constants/strings.dart';
 import 'package:walletfox/utils/styles/app_theme.dart';
 import 'package:walletfox/views/add_subscription_view.dart';
@@ -19,21 +21,23 @@ class DashboardView extends StatefulWidget {
 class _DashboardViewState extends State<DashboardView> {
   @override
   Widget build(BuildContext context) {
+    final subVm = context.watch<SubscriptionProvider>();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.blue.withOpacity(0.3),
         title: Text(APP_NAME),
         centerTitle: false,
       ),
-      body: _buildHome(context),
+      body: _buildHome(context, subVm),
       floatingActionButton: FloatingActionButton(onPressed: () => Navigator.of(context,).push(MaterialPageRoute(builder: (_) => AddSubscriptionView())), child: const Icon(Icons.add),
       ),
     );
   }
 }
 
-Widget? _buildHome(BuildContext context) {
-  final subscriptionsList = [];
+Widget? _buildHome(BuildContext context, SubscriptionProvider subVm) {
+  // final subscriptionsList = [];
+
   return SingleChildScrollView(
     padding: const EdgeInsets.all(16.0),
     child: Column(
@@ -72,16 +76,17 @@ Widget? _buildHome(BuildContext context) {
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
 
-        subscriptionsList.isEmpty
+        subVm.subscriptions.isEmpty
           ? EmptyState(title: "No Subscriptions yet", subtitle: 'Add one')
           :
           ListView.builder(
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
-          itemCount: 3,
+          itemCount: subVm.subscriptions.length,
           itemBuilder: (context, index) 
           {
-            return SubscriptionTile(index: index);
+            final subscription = subVm.subscriptions[index];
+            return SubscriptionTile(index: index, sub: subscription,);
           }),
 
           AnalysisView(),

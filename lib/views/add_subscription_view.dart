@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:walletfox/providers/subscription_provider.dart';
 import 'package:walletfox/utils/styles/app_theme.dart';
 import 'package:walletfox/widgets/analysis_view.dart';
 
 class AddSubscriptionView extends StatelessWidget {
   AddSubscriptionView({super.key});
 
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController costController = TextEditingController();
-  final TextEditingController dateController = TextEditingController();
-
-  String billingCycle = "Monthly";
-  String category = "entertainment";
+  
 
   @override
   Widget build(BuildContext context) {
+    final subVm = context.watch<SubscriptionProvider>();
     return Scaffold(
       appBar: AppBar(titleSpacing: 0, title: Text("Add a new subscription"),),
 
@@ -30,23 +28,28 @@ class AddSubscriptionView extends StatelessWidget {
               ),
             ),
 
-            _borderField(nameController, "Subscription Name"),
-            _borderField(costController, "Monthly Cost (\$)", inputType: TextInputType.number),
-            _borderField(dateController, "Next billing date", readOnly: true, onTap: () {
+            _borderField(subVm.nameController, "Subscription Name"),
+            _borderField(subVm.costController, "Monthly Cost (\$)", inputType: TextInputType.number),
+            _borderField(subVm.dateController, "Next billing date", readOnly: true, onTap: () {
               // Pick Date
+              subVm.pickNextBillingDate(context);
             }),
             const SizedBox(height: 8,),
-            _dropDownField(label: "Billing Cycle", value: billingCycle, items: const ["Daily", "Weekly", "Monthly", "Yearly", "Never"], onChanged: (v) {}),
-            _dropDownField(label: "Category", value: category, items: categories, onChanged: (v) {}),
+            _dropDownField(label: "Billing Cycle", value: subVm.billingCycle, items: const ["Daily", "Weekly", "Monthly", "Yearly", "Never"], onChanged: (v) {subVm.setBillingCycle(v);}),
+            _dropDownField(label: "Category", value: subVm.category, items: subVm.categories, onChanged: (v) {subVm.setCategory(v);}),
 
             const SizedBox(height: 40,),
             SizedBox(
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   //save subscription
-                  Navigator.pop(context);
+                  final result = await subVm.saveSubscription(context);
+                  if(result && context.mounted) {
+
+                    Navigator.pop(context);
+                  }
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll(AppColors.blue),
