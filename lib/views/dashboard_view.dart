@@ -33,7 +33,7 @@ class _DashboardViewState extends State<DashboardView> {
 }
 
 Widget? _buildHome(BuildContext context) {
-  final subscriptionsList = [12];
+  final subscriptionsList = [];
   return SingleChildScrollView(
     padding: const EdgeInsets.all(16.0),
     child: Column(
