@@ -62,7 +62,7 @@ class SubscriptionTile extends StatelessWidget {
       case "sports":
         icon=Icons.sports;
         break;
-      case "sass":
+      case "software":
         icon=Icons.laptop;
         break;
       case "utilites":

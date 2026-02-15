@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:walletfox/model/subscription_model.dart';
 import 'package:walletfox/utils/styles/app_theme.dart';
 
 class NotificationListCard extends StatelessWidget {
-  const NotificationListCard({super.key});
+  final SubscriptionModel sub;
+  const NotificationListCard({super.key, required this.sub});
 
   @override
   Widget build(BuildContext context) {
-    final badgeColor = AppColors.blue;
-    final daysLeft = 4;
+    final now = DateTime.now();
+    final daysLeft = sub.nextBillingDate.difference(now).inDays;
+    Color badgeColor;
+    if(daysLeft <= 1) {
+      badgeColor = Colors.red;
+    } else if (daysLeft <= 3) {
+      badgeColor = Colors.yellow;
+    } else {
+      badgeColor = Colors.green;
+    }
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       // margin: const EdgeInsets.symmetric(vertical: 8),
@@ -17,12 +27,12 @@ class NotificationListCard extends StatelessWidget {
           CircleAvatar(
             radius: 22,
             backgroundColor: AppColors.blue.withOpacity(0.3),
-            child: PhosphorIcon(PhosphorIcons.notification(), color: AppColors.blue,),
+            child: PhosphorIcon(Icons.notifications, color: AppColors.blue,),
           ),
           Expanded(child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("YouTube", style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),)
+              Text(sub.name, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),)
             ],
           )
           ),

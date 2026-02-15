@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:walletfox/model/subscription_model.dart';
+import 'package:walletfox/services/notification_service.dart';
 
 class SubscriptionProvider extends ChangeNotifier {
   //Hive Box
@@ -17,10 +18,12 @@ class SubscriptionProvider extends ChangeNotifier {
   String billingCycle = "Monthly";
   String category = "entertainment";
 
+  final _notifications = NotificationService();
+
   List<String> categories = [
     "entertainment",
     "sports",
-    "sass",
+    "software",
     "utilities",
     "health",
     "others"
@@ -64,7 +67,13 @@ class SubscriptionProvider extends ChangeNotifier {
 
     await _box.add(subscription);
 
-    //TODO: Schedule Notification
+    //Schedule Notification
+    _notifications.scheduleRenewalNotification(
+      id: subscription.id,
+      name: subscription.name,
+      date: subscription.nextBillingDate,
+      amount: subscription.monthlyCost,
+    );
 
     _getSubscriptions();
     clearForm();
@@ -78,7 +87,8 @@ class SubscriptionProvider extends ChangeNotifier {
     await _box.delete(key);
     _getSubscriptions();
 
-    //TODO: cancel notification
+    //cancel notification
+    _notifications.cancel(id);
   }
 
   void _getSubscriptions() {

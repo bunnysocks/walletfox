@@ -82,7 +82,7 @@ class _AnalysisViewState extends State<AnalysisView> {
       case "sports":
         color=AppColors.green;
         break;
-      case "sass":
+      case "software":
         color=Colors.yellow;
         break;
       case "utilites":

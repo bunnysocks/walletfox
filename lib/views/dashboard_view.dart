@@ -67,8 +67,9 @@ Widget? _buildHome(BuildContext context, SubscriptionProvider subVm) {
               shrinkWrap: true,
               itemBuilder: (context, index)
             {
-              return NotificationListCard();
-            }, itemCount: 4)
+              final sub = upcomingRenewalSubs[index];
+              return NotificationListCard(sub: sub,);
+            }, itemCount: upcomingRenewalSubs.length)
           ],
         ),
 
